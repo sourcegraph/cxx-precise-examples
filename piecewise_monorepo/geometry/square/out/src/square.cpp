@@ -23,5 +23,14 @@
 //                                                       ^^^^^^^^^^^ reference cxx . cxx-minimal-geometry-square v0$ geometry/Square#side_length.
   }
   
+  void test() {
+//     ^^^^ definition cxx . cxx-minimal-geometry-square v0$ geometry/test(49f6e7a06ebc5aa8).
+//     documentation
+//     > No documentation available.
+    (void)arithmetic::multiply3(0, 0, 0);
+//        ^^^^^^^^^^ reference cxx . cxx-minimal-arithmetic v0$ arithmetic/
+//                    ^^^^^^^^^ reference cxx . . $ arithmetic/multiply3(2326284602b0bb2d).
+  }
+  
   }
   
