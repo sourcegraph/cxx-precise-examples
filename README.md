@@ -14,11 +14,17 @@ of configuring precise code intel for C++.
 
   ```
   # Make sure scip-clang, make, cmake and Ninja are on PATH
-  PATH="/path/to/dir-with-scip-clang-binary:$PATH" make indexes
+  make indexes
   ```
 
   The snapshot output is committed under `out/` directories
   in `arithmetic/` and `geometry/square` respectively.
+
+  ```
+  # Make sure the above + scip CLI (https://github.com/sourcegraph/scip)
+  # are on the PATH
+  make snapshots
+  ```
 
   The key point to notice is that the symbol names such as
   ```
