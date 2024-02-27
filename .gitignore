@@ -1,0 +1,6 @@
+# CMake build directories
+build/
+.cache
+**/index.scip
+
+.vscode/

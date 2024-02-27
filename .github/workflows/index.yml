@@ -1,0 +1,52 @@
+name: 'CI and index C++'
+on:
+    push:
+        branches: [ main ]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Install dependencies
+              run: |
+                sudo apt-get update -y
+                sudo apt-get install cmake ninja-build make -y
+                # Install scip-clang and scip CLI
+                TAG=v0.3.1 \
+                    OS="$(uname -s | tr '[:upper:]' '[:lower:]')" \
+                    RELEASE_URL="https://github.com/sourcegraph/scip-clang/releases/download/$TAG" \
+                    bash -c 'curl -L "$RELEASE_URL/scip-clang-x86_64-$OS" -o scip-clang' \
+                && chmod +x scip-clang
+                env \
+                    TAG="v0.3.3" \
+                    OS="$(uname -s | tr '[:upper:]' '[:lower:]')" \
+                    ARCH="$(uname -m | sed -e 's/x86_64/amd64/')" \
+                    bash -c 'curl -L "https://github.com/sourcegraph/scip/releases/download/$TAG/scip-$OS-$ARCH.tar.gz"' \
+                | tar xzf - scip
+                wget https://github.com/sourcegraph/src-cli/releases/download/5.3.0/src_linux_amd64
+                chmod +x src_linux_amd64
+                mv src_linux_amd64 src
+                echo "PATH=$(pwd):$PATH" >> $GITHUB_ENV
+            - name: Build
+              run: |
+                make -C piecewise_monorepo snapshots
+            - name: Check diff
+              run: |
+                if ! git diff --quiet; then
+                    git diff
+                    echo ""
+                    echo "------------------------------"
+                    echo "Re-run make snapshots and push"
+                    echo "------------------------------"
+                    exit 1
+                fi
+            - name: Upload indexes
+              run: |
+                cd piecewise_monorepo
+                pushd arithmetic
+                src code-intel upload -github-token "${{ secrets.GITHUB_TOKEN }}"
+                popd
+                pushd geometry/square
+                src code-intel upload -github-token "${{ secrets.GITHUB_TOKEN }}"
+                popd
