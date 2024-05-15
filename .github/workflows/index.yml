@@ -50,3 +50,5 @@ jobs:
                 pushd geometry/square
                 src code-intel upload -github-token "${{ secrets.GITHUB_TOKEN }}"
                 popd
+              env:
+                SRC_ACCESS_TOKEN: ${{ secrets.SRC_ACCESS_TOKEN_DOTCOM }}
